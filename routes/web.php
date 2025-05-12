@@ -10,9 +10,9 @@ Route::get('/products', [HomepageController::class, 'products'])->name('products
 
 // Volt::route('products', 'products')->name('products');
 
-Route::get('/categories', function() { 
-    return "halaman categories product"; 
-});
+// Route::get('/categories', function() { 
+//     return "halaman categories product"; 
+// });
 
 
 Route::view('dashboard', 'dashboard')
@@ -21,6 +21,10 @@ Route::view('dashboard', 'dashboard')
 
 
 Route::resource('categories', ProductCategoryController::class);
+
+// Route untuk produk (ProductController)
+// Route::resource('products', ProductController::class);
+
 
     
 Route::view('dashboard', 'dashboard')
