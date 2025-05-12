@@ -1,3 +1,6 @@
-<x-layout> 
-   <h3>Ini adalah halaman Products</h3> 
-</x-layout> 
+<!-- <x-layout>
+
+<x-slot:title>{{ $title ?? 'Products' }}</x-slot>
+
+
+</x-layout> -->

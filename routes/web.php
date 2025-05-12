@@ -1,28 +1,41 @@
 <?php
 
+use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\ProductCategoryController;
 
-// Halaman Utama (Home)
-Route::get('/', function () {
-    $title = "homepage - uhuy";
-    return  view('web.homepage',["title" => $title]);
-    // "<body style='background-color: ashgrey; margin: 0; padding: 20px; text-align: center;'>
-    //             <h2 style='color: darkgray;'>🏠 Selamat Datang di CROAKS.id - E-commerce Terbaik!</h2>
-    //         </body>";
-});
+Route::get('/', [HomepageController::class, 'index'])->name('home');
+Route::get('/products', [HomepageController::class, 'products'])->name('products');
 
-// Halaman Produk (Daftar Produk)
-Route::get('/products', function () {
-    return "Halaman products";
-    // "<body style='background-color: ashgrey; margin: 0; padding: 20px; text-align: center;'>
-    //             <h2 style='color: darkgray;'>🛙️ Semua Produk di Croacks.id</h2>
-    //         </body>";
-});
+// Volt::route('products', 'products')->name('products');
 
-Route::get('categories', function(){ 
+Route::get('/categories', function() { 
     return "halaman categories product"; 
- }); 
- 
+});
+
+
+Route::view('dashboard', 'dashboard')
+->middleware(['auth', 'verified'])
+->name('dashboard');
+
+
+Route::resource('categories', ProductCategoryController::class);
+
+    
+Route::view('dashboard', 'dashboard')
+->middleware(['auth', 'verified'])
+->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+Route::redirect('settings', 'settings/profile');
+
+Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
+Volt::route('settings/password', 'settings.password')->name('settings.password');
+Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+});
+
+require __DIR__.'/auth.php';
 
 
 // // Halaman Detail Produk dengan ID
@@ -35,7 +48,7 @@ Route::get('categories', function(){
 
 // // Halaman Keranjang Belanja
 // Route::get('/cart', function () {
-//     return "<body style='background-color: ashgrey; margin: 0; padding: 20px; text-align: center;'>
+//     return "<body style='background-color: ashgrey; margin:w 0; padding: 20px; text-align: center;'>
 //                 <h2 style='color: darkgray;'>🛒 Keranjang Belanja Anda</h2>
 //             </body>";
 // });
@@ -102,4 +115,3 @@ Route::get('categories', function(){
 //                 <h2 style='color: darkgray;'>📰 Blog & Berita CROAKS.id</h2>
 //             </body>";
 // });
-
