@@ -11,9 +11,9 @@ class ProductController extends Controller
     // Menampilkan daftar produk
     public function index()
     {
-        // Ambil semua produk dengan kategori terkait menggunakan eager loading
-        $products = Product::with('category')->get();
-        return view('products.index', compact('products'));
+        // Ambil semua produk dengan kategori terkait menggunakan eager loading dan paginasi
+        $products = Product::with('category')->paginate(10);
+        return view('dashboard.products.index', compact('products'));
     }
 
     // Menampilkan form untuk menambahkan produk baru
@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
         // Ambil semua kategori untuk dropdown kategori produk
         $categories = ProductCategory::all();
-        return view('products.create', compact('categories'));
+        return view('dashboard.products.create', compact('categories'));
     }
 
     // Menyimpan produk baru
@@ -30,7 +30,6 @@ class ProductController extends Controller
         // Validasi input dari pengguna
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
             'product_category_id' => 'required|exists:product_categories,id', // Pastikan kategori ada
             'description' => 'nullable|string',
             'price' => 'required|numeric',
@@ -38,10 +37,23 @@ class ProductController extends Controller
             'image_url' => 'nullable|image|max:2048', // Validasi gambar
         ]);
 
+        // Generate slug otomatis dari nama produk
+        $slug = \Str::slug($request->name);
+
+        // Cek apakah slug sudah ada, jika ada tambahkan angka unik
+        $count = Product::where('slug', 'LIKE', "{$slug}%")->count();
+        if ($count > 0) {
+            $slug = $slug . '-' . ($count + 1);
+        }
+
+        // Generate SKU unik otomatis
+        $sku = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $request->name), 0, 3)) . '-' . strtoupper(uniqid());
+
         // Menyimpan produk baru
         $product = Product::create([
             'name' => $request->name,
-            'slug' => $request->slug,
+            'slug' => $slug,
+            'sku' => $sku,
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
@@ -59,7 +71,7 @@ class ProductController extends Controller
     {
         // Ambil semua kategori untuk dropdown kategori produk
         $categories = ProductCategory::all();
-        return view('products.edit', compact('product', 'categories'));
+        return view('dashboard.products.edit', compact('product', 'categories'));
     }
 
     // Mengupdate produk

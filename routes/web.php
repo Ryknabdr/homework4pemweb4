@@ -22,14 +22,10 @@ Route::view('dashboard', 'dashboard')
 
 Route::resource('categories', ProductCategoryController::class);
 
-// Route untuk produk (ProductController)
-// Route::resource('products', ProductController::class);
+Route::middleware(['web'])->group(function () {
+    Route::resource('products', \App\Http\Controllers\ProductController::class);
+});
 
-
-    
-Route::view('dashboard', 'dashboard')
-->middleware(['auth', 'verified'])
-->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
 Route::redirect('settings', 'settings/profile');
